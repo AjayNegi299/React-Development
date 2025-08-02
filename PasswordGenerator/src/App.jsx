@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function App() {
   const [length, setLength] = useState(8);
@@ -19,6 +19,17 @@ function App() {
     setPassword(pass);
   }, [length, numberAllowed, charAllowed, setPassword]);
 
+    useEffect(()=>{
+      passwordGenerator()
+    },[length, numberAllowed, charAllowed, passwordGenerator])
+
+    const passwordRef = useRef(null)
+
+    const copyPasswordGenerator = useCallback(()=>{
+      passwordRef.current?.select()
+      window.navigator.clipboard.writeText(password)
+    },[password])
+
   return (
     <div className="w-full max-w-md mx-auto shadow-2xl rounded-lg px-4 py-4 my-8 bg-gray-800 text-orange-500">
       <h1 className="text-white text-center my-3 font-bold text-2xl">
@@ -30,8 +41,13 @@ function App() {
           value={password}
           className="outline-none w-full py-1 px-3 bg-gray-100 text-black"
           placeholder="Password"
-        />
-        <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+          ref={passwordRef}
+          
+          />
+        <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0  cursor-pointer
+        "
+        onClick={copyPasswordGenerator}
+        >
           copy
         </button>
       </div>
@@ -53,7 +69,7 @@ function App() {
           type="checkbox"
           defaultChecked={numberAllowed}
           id="NumberInput"
-          onCanPlay={() => setNumberAllowed((pre) => !pre)}
+          onClick={() => setNumberAllowed((pre) => !pre)}
         />
         <label htmlFor="NumberInput">Number</label>
 
@@ -61,7 +77,7 @@ function App() {
           type="checkbox"
           defaultChecked={charAllowed}
           id="characterInput"
-          onCanPlay={() => setCharAllowed((pre) => !pre)}
+          onClick={() => setCharAllowed((pre) => !pre)}
         />
         <label htmlFor="characterInput">Characters</label>
       </div>
